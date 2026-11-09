@@ -27,3 +27,26 @@ function loop(){if(!vis||document.hidden)return;draw();requestAnimationFrame(loo
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&!reduce)loop()});
 if(reduce)draw();else loop();
 })();
+
+(function(){
+var cp=document.getElementById('cp'),id=document.getElementById('upiId');if(!cp||!id)return;
+function done(){cp.textContent='Copied ✓';setTimeout(function(){cp.textContent='Copy'},1800)}
+cp.onclick=function(){var t=id.textContent;
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fb)}else fb();
+function fb(){var r=document.createRange();r.selectNodeContents(id);var s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand('copy');done()}catch(e){}}};
+})();
+
+(function(){
+var T={upi:{a:[50,100,250,500],s:'₹',l:'Pay with UPI app',n:'Opens your UPI app on a phone. On a computer, copy the ID.'},pp:{a:[2,5,10,20],s:'$',l:'Continue to PayPal',n:'You can still change the amount on PayPal.'}};
+var tabs=document.querySelectorAll('.tabs button'),box=document.getElementById('amts'),pay=document.getElementById('pay'),row=document.getElementById('idrow'),note=document.getElementById('pnote'),idEl=document.getElementById('upiId');
+if(!box||!pay||!idEl)return;
+var tab='upi',amt=null;
+function link(){if(tab==='upi')return 'upi://pay?pa='+idEl.textContent+'&pn=Prince%20Kumar&cu=INR'+(amt?'&am='+amt:'');return 'https://www.paypal.com/paypalme/princekrvert'+(amt?'/'+amt+'USD':'')}
+function render(){var c=T[tab];
+tabs.forEach(function(b){var on=b.dataset.t===tab;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
+box.innerHTML='';c.a.forEach(function(v){var b=document.createElement('button');b.type='button';b.textContent=c.s+v;b.className=v===amt?'on':'';b.onclick=function(){amt=(amt===v)?null:v;render()};box.appendChild(b)});
+row.hidden=tab!=='upi';pay.href=link();pay.textContent=amt?c.l+' · '+c.s+amt:c.l;note.textContent=c.n;
+if(tab==='pp'){pay.target='_blank';pay.rel='noopener'}else{pay.removeAttribute('target');pay.removeAttribute('rel')}}
+tabs.forEach(function(b){b.onclick=function(){tab=b.dataset.t;amt=null;render()}});
+render();
+})();
