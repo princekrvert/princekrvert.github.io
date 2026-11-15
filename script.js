@@ -1,4 +1,4 @@
-// Prince Kumar portfolio: theme toggle, scroll reveal and 3D hero scene (Three.js)
+// Prince Kumar portfolio: theme toggle, scroll reveal, 3D hero scene, support box, mobile menu
 (function(){
 var r=document.documentElement,b=document.getElementById('th');
 b.onclick=function(){var d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark';col()};
@@ -49,4 +49,17 @@ row.hidden=tab!=='upi';pay.href=link();pay.textContent=amt?c.l+' · '+c.s+amt:c.
 if(tab==='pp'){pay.target='_blank';pay.rel='noopener'}else{pay.removeAttribute('target');pay.removeAttribute('rel')}}
 tabs.forEach(function(b){b.onclick=function(){tab=b.dataset.t;amt=null;render()}});
 render();
+})();
+
+(function(){
+var h=document.querySelector('header'),b=document.getElementById('mb');if(!h||!b)return;
+function set(o){h.classList.toggle('open',o);b.setAttribute('aria-expanded',o);b.setAttribute('aria-label',o?'Close menu':'Open menu');b.textContent=o?'\u2715':'\u2630'}
+b.onclick=function(){set(!h.classList.contains('open'))};
+h.querySelectorAll('nav a').forEach(function(a){a.onclick=function(){set(false)}});
+addEventListener('resize',function(){if(innerWidth>960)set(false)});
+var p=document.getElementById('pay'),n=document.getElementById('pnote');if(!p||!n)return;
+var coarse=matchMedia('(pointer:coarse)').matches;
+p.addEventListener('click',function(e){if(p.href.indexOf('upi:')!==0)return;
+if(!coarse){e.preventDefault();n.textContent='UPI apps open on phones. Copy the ID above and pay from any UPI app.';return}
+setTimeout(function(){if(!document.hidden)n.textContent='Nothing opened? Copy the ID above and pay from any UPI app.'},1500)});
 })();
